@@ -1,0 +1,41 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: '0 2 * * *'    # 02:00 UTC (09:00 WIB)
+    - cron: '0 6 * * *'    # 06:00 UTC (13:00 WIB)
+    - cron: '0 10 * * *'   # 10:00 UTC (17:00 WIB)
+    - cron: '0 14 * * *'   # 14:00 UTC (21:00 WIB)
+    - cron: '0 18 * * *'   # 18:00 UTC (01:00 WIB+1)
+  workflow_dispatch:
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      
+      - name: Create multiple commits
+        run: |
+          for i in {1..4}; do
+            # Buat file dengan timestamp dan nomor urut
+            current_time=$(date +%Y%m%d-%H%M%S)
+            echo "Commit ke-$i pada $(date)" > "commits/commit-${current_time}-${i}.txt"
+            
+            git add .
+            git commit -m "Auto commit #$i - $(date)"
+            
+            sleep 30
+          done
+          
+          # Push changes
+          git push origin main 
