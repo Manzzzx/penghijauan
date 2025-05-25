@@ -31,10 +31,10 @@ jobs:
             TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S WIB")
             
             # Update README dengan timestamp baru
-            echo "Penghijauan" > README.md
             echo "Last updated: $TIMESTAMP" >> README.md
+            echo "" > README.md
             echo "" >> README.md
-            echo "Auto-commit" >> README.md
+            echo "" >> README.md
             
             # Commit dan tunggu sebentar
             git add README.md
