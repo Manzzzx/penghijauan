@@ -2,11 +2,7 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: '0 2 * * *'    # 02:00 UTC (09:00 WIB)
-    - cron: '0 6 * * *'    # 06:00 UTC (13:00 WIB)
-    - cron: '0 10 * * *'   # 10:00 UTC (17:00 WIB)
-    - cron: '0 14 * * *'   # 14:00 UTC (21:00 WIB)
-    - cron: '0 18 * * *'   # 18:00 UTC (01:00 WIB+1)
+    - cron: '0 */6 * * *'  # Setiap 6 jam (4x sehari)
   workflow_dispatch:      # Tetap bisa dipicu manual
 
 jobs:
@@ -19,27 +15,35 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Setup Git
+      - name: Setup Git and Timezone
         run: |
           git config --local user.email "147714843+Manzzzx@users.noreply.github.com"
           git config --local user.name "Manzzzx"
+          export TZ="Asia/Jakarta"
       
-      - name: Create multiple commits
+      - name: Create commits
         run: |
-          # Pull the latest changes to avoid conflicts
+          # Pull latest changes
           git pull origin main
-
-          mkdir -p commits
-          rm -rf commits/*
           
-          for i in {1..4}; do
-            current_time=$(date +%Y%m%d-%H%M%S)
-            echo "Commit ke-$i pada $(date)" > "commits/commit-latest.txt"
+          # Buat 5 commit dengan update README
+          for i in {1..5}; do
+            TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S WIB")
             
-            git add .
-            git commit -m "Auto commit #$i - $(date)"
+            # Update README dengan timestamp baru
+            echo "Penghijauan" > README.md
+            echo "Last updated: $TIMESTAMP" >> README.md
+            echo "" >> README.md
+            echo "Auto-commit" >> README.md
             
-            sleep 30
+            # Commit dan tunggu sebentar
+            git add README.md
+            git commit -m "Auto commit - $TIMESTAMP"
+            
+            if [ $i -ne 5 ]; then
+              sleep 30
+            fi
           done
           
+          # Push semua perubahan
           git push origin main
