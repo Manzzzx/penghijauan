@@ -1,0 +1,35 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at 00:00 UTC everyday
+  workflow_dispatch:      # Allows manual trigger
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      
+      - name: Create random file and commit
+        run: |
+          # Get current date
+          echo "Daily commit on $(date)" > "commits/commit-$(date +%Y%m%d-%H%M%S).txt"
+          
+          # Stage changes
+          git add .
+          
+          # Commit with today's date
+          git commit -m "Daily commit $(date)"
+          
+          # Push changes
+          git push origin main 
