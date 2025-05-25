@@ -26,21 +26,25 @@ jobs:
       
       - name: Create multiple commits
         run: |
+          # Pull latest changes
+          git pull origin main
+          
           # Buat dan bersihkan directory commits
           mkdir -p commits
           rm -rf commits/*
           
           for i in {1..4}; do
-            current_time=$(date +%Y%m%d-%H%M%S)
+            # Buat commit baru
             echo "Commit pada $(date)" > "commits/commit-latest.txt"
             
             # Stage dan commit
             git add .
             git commit -m "Auto commit $(date)"
             
+            # Push setiap commit
+            git pull --rebase origin main
+            git push origin main
+            
             # Tunggu sebentar antara commit
             sleep 30
-          done
-          
-          # Push changes
-          git push origin main 
+          done 
