@@ -23,27 +23,25 @@ jobs:
       
       - name: Create commits
         run: |
-          # Pull latest changes
-          git pull origin main
-          
           # Buat 5 commit dengan update README
           for i in {1..5}; do
+            # Pull latest changes
+            git pull --rebase origin main
+            
             TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S WIB")
             
             # Update README dengan timestamp baru
-            echo "Last updated: $TIMESTAMP" >> README.md
             echo "" > README.md
+            echo "Last updated: $TIMESTAMP" >> README.md
             echo "" >> README.md
             echo "" >> README.md
             
-            # Commit dan tunggu sebentar
+            # Commit dan push langsung
             git add README.md
             git commit -m "Auto commit - $TIMESTAMP"
+            git push origin main
             
             if [ $i -ne 5 ]; then
               sleep 30
             fi
           done
-          
-          # Push semua perubahan
-          git push origin main
